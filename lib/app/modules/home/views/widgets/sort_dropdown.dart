@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_project/app/data/core/common/widgets/custom_text.dart';
 import 'package:task_project/app/data/core/utils/constans/app_color.dart';
 import 'package:task_project/app/data/core/utils/constans/app_sizer.dart';
 import 'package:task_project/app/data/core/utils/constans/icon_path.dart';
@@ -31,19 +32,14 @@ class SortDropdown extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Sort By',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
+                    CustomText(text: 'Sort By',   fontSize: 18.sp,
+                     ),
+
                     IconButton(
                       icon: Icon(
                         Icons.close,
                         size: 24.sp,
-                        color: AppColors.textSecondary,
+                        color: AppColors.textPrimary,
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
@@ -53,9 +49,9 @@ class SortDropdown extends StatelessWidget {
               Divider(height: 1.h, color: AppColors.textSecondary.withOpacity(0.2)),
               SizedBox(height: 8.h),
               // Sort Options
-              _buildSortOption(context, 'Featured', 'featured'),
-              _buildSortOption(context, 'Price: Low to High', 'price_low_high'),
+              //_buildSortOption(context, 'Featured', 'featured'),
               _buildSortOption(context, 'Price: High to Low', 'price_high_low'),
+              _buildSortOption(context, 'Price: Low to High', 'price_low_high'),
               _buildSortOption(context, 'Rating', 'rating'),
               SizedBox(height: 16.h),
             ],
