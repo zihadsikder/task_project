@@ -31,34 +31,56 @@ class ProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Product Image
-          Container(
-            height: 120.h,
+          Stack(
+           children: [
+            Container(
+               height: 120.h,
+               decoration: BoxDecoration(
+                 color: Colors.white,
+                 borderRadius: BorderRadius.circular(8),
+               ),
+               child: ClipRRect(
+                 borderRadius: const BorderRadius.only(
+                   topLeft: Radius.circular(8),
+                   topRight: Radius.circular(8),
+                 ),
+                 child: SizedBox(
+                   height: 120.h,
+                   width: double.infinity,
+                   child: Image.network(
+                     product.image ?? '',
+                     fit: BoxFit.contain,
+                     errorBuilder: (context, error, stackTrace) {
+                       return Container(
+                         color: Colors.grey[200],
+                         child: const Center(
+                           child: Icon(Icons.image_not_supported, color: Colors.grey),
+                         ),
+                       );
+                     },
+                   ),
+                 ),
+               ),
+             ),
+          Positioned(
+            top: 4,
+            right: 4,
+
+            child: Container(
+            padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              color: Color(0xffdbdee5),
+             shape: BoxShape.circle,
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-              child: SizedBox(
-                height: 120.h,
-                width: double.infinity,
-                child: Image.network(
-                  product.image ?? '',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, color: Colors.grey),
-                      ),
-                    );
-                  },
-                ),
-              ),
+            child: Icon(
+              Icons.favorite,
+              color: Colors.red,
+              size: 16.sp,
             ),
+          ),
+
+          )
+           ],
           ),
 
           // Product Details
