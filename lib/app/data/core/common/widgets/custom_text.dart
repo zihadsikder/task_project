@@ -34,13 +34,13 @@ class CustomText extends StatelessWidget {
       textAlign: textAlign,
       text,
 
-      style: GoogleFonts.poppins(
+      style: GoogleFonts.inter(
           decoration: decoration,
           decorationColor: decorationColor ?? const Color(0xffA59F92),
           fontSize: fontSize ?? 16.sp,
           //letterSpacing: 1,
           color: color ?? AppColors.textPrimary,
-          fontWeight: fontWeight ?? FontWeight.w500),
+          fontWeight: fontWeight ?? FontWeight.w600),
       overflow: textOverflow,
       maxLines: maxLines,
 

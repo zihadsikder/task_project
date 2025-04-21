@@ -1,58 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_project/app/data/core/common/widgets/custom_text.dart';
 import 'package:task_project/app/data/core/utils/constans/app_color.dart';
 import 'package:task_project/app/data/core/utils/constans/app_sizer.dart';
-import 'package:task_project/app/data/core/utils/constans/icon_path.dart';
-import 'package:task_project/app/modules/home/views/screen/search_screen.dart';
 import 'package:task_project/app/modules/home/views/widgets/product_card.dart';
-import 'package:task_project/app/modules/home/views/widgets/shimmer_loading.dart';
+import 'package:task_project/app/modules/home/views/widgets/search_bar.dart';
+import 'package:task_project/app/modules/home/views/widgets/sort_dropdown.dart';
 
-import '../controllers/home_controller.dart';
 
-class HomeView extends GetView<HomeController> {
-  const HomeView({super.key});
+import '../../controllers/home_controller.dart';
+import '../widgets/shimmer_loading.dart';
+
+
+class SearchScreen extends GetView<HomeController> {
+  const SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.background,
+      
         body: Column(
           children: [
-            //SizedBox(height: 24.h),
             Container(
-
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.h),
-                color: Colors.transparent,
-                border: Border.all(width: 1,color: Color(0xffD1D5DB))
-              ),
-              margin: EdgeInsets.only(left: 16.w, right :16.w,top: 16.h),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              child: InkWell(
-                onTap: (){
-                  Get.to(()=> SearchScreen());
-                },
-                child: Row(
-                  children: [
-                    Image.asset(IconPath.search,height: 16.h,),
-                    //Icon(Icons.search_outlined,color: AppColors.textSecondary ,),
-                    SizedBox(width: 8.w),
-                    CustomText(
-                      text: 'Search Anythings...',
-                      color:  Color(0xff9CA3AF),
-                      fontSize: 14.sp,
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomSearchBar(
+                      onChanged: controller.updateSearchQuery,
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 10.w),
+                  SortDropdown(
+                    onChanged: controller.updateSortOption,
+                  ),
+                ],
               ),
             ),
             Expanded(
               child: Obx(() {
                 // Show loading indicator when fetching initial data
-                if (controller.inProgress.value &&
-                    controller.productList.isEmpty) {
+                if (controller.inProgress.value && controller.productList.isEmpty) {
                   return const ShimmerLoading();
                 }
       
@@ -78,19 +68,14 @@ class HomeView extends GetView<HomeController> {
                     child: GridView.builder(
                       controller: controller.scrollController,
                       padding: EdgeInsets.symmetric(vertical: 16.h),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.7,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                          ),
-                      itemCount:
-                          controller.filteredProducts.length +
-                          (controller.inProgress.value &&
-                                  controller.productList.isNotEmpty
-                              ? 2
-                              : 0),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.7,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: controller.filteredProducts.length +
+                          (controller.inProgress.value && controller.productList.isNotEmpty ? 2 : 0),
                       itemBuilder: (context, index) {
                         // Show loading at the end for pagination
                         if (index >= controller.filteredProducts.length) {
