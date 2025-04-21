@@ -42,7 +42,9 @@ dependencies:
   google_fonts: ^6.2.1
   shared_preferences: ^2.3.2
   flutter_spinkit:
-  hive_flutter:
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  connectivity_plus: ^4.0.2
   shimmer: ^3.0.0
 
 dev_dependencies:

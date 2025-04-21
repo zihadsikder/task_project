@@ -1,9 +1,5 @@
 class AppUrls {
-  AppUrls._();
-
-  //static const String _baseUrl = '';
-  static const String product = 'https://fakestoreapi.com/products';
-
-
-
+  static const String baseUrl = 'https://fakestoreapi.com';
+  static const String product = '$baseUrl/products';
+  static const String productByCategory = '$baseUrl/products/category';
 }
