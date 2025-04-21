@@ -17,7 +17,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xffdbdee5),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -31,32 +31,39 @@ class ProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Product Image
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
+          Container(
+            height: 120.h,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: SizedBox(
-              height: 120.h,
-              width: double.infinity,
-              child: Image.network(
-                product.image ?? '',
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[200],
-                    child: const Center(
-                      child: Icon(Icons.image_not_supported, color: Colors.grey),
-                    ),
-                  );
-                },
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+              child: SizedBox(
+                height: 120.h,
+                width: double.infinity,
+                child: Image.network(
+                  product.image ?? '',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: Icon(Icons.image_not_supported, color: Colors.grey),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
 
           // Product Details
           Padding(
-            padding: EdgeInsets.all(8.w),
+            padding: EdgeInsets.only(left:2.w,right:8.w,top: 8.h,bottom: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,46 +71,44 @@ class ProductCard extends StatelessWidget {
                 CustomText(
                   text: product.title ?? 'Unknown Product',
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                   maxLines: 2,
                   textOverflow: TextOverflow.ellipsis,
                 ),
 
-                SizedBox(height: 4.h),
-
-                // Category
-                // CustomText(
-                //   text: product.category ?? '',
-                //   fontSize: 12.sp,
-                //   color: AppColors.textSecondary,
-                //   maxLines: 1,
-                //   textOverflow: TextOverflow.ellipsis,
-                // ),
-
                 SizedBox(height: 8.h),
-
+                CustomText(
+                  text: '\$${product.price?.toStringAsFixed(2) ?? '0.00'}',
+                  fontWeight: FontWeight.bold,
+                ),
+                SizedBox(height: 8.h),
                 // Price and Rating
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CustomText(
-                      text: '\$${product.price?.toStringAsFixed(2) ?? '0.00'}',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                    Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(
+                        Icons.star,
+                        color: Colors.white,
+                        size: 16.sp,
+                      ),
                     ),
-
+                    SizedBox(width: 4.w),
                     Row(
                       children: [
-                        Icon(
-                          Icons.star,
-                          color: AppColors.secondary,
-                          size: 16.sp,
-                        ),
-                        SizedBox(width: 2.w),
                         CustomText(
-                          text: '${product.rating?.rate?.toStringAsFixed(1) ?? '0.0'}',
-                          fontSize: 12.sp,
+                          text: product.rating?.rate?.toStringAsFixed(1) ?? '0.0',
+                          fontSize: 14.sp,
+                          color: AppColors.textPrimary,
+                        ),
+                        SizedBox(width: 4.w),
+                        CustomText(
+                          text: '(${(product.rating?.count.toString()) ?? '0'})',
+                          fontSize: 14.sp,
                           color: AppColors.textSecondary,
                         ),
                       ],
