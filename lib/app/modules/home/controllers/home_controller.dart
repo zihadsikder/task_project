@@ -1,11 +1,12 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:task_project/app/data/core/utils/logging/logger.dart';
+import 'package:task_project/app/data/models/product_models.dart';
 
 import '../../../../services/api_end_point.dart';
-
 import '../../../../services/newtwork_caller.dart';
-import '../../../data/core/utils/logging/logger.dart';
-import '../../../data/models/product_models.dart';
 
 class HomeController extends GetxController {
   final RxList<Product> productList = <Product>[].obs;
@@ -16,18 +17,28 @@ class HomeController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxString sortOption = 'featured'.obs;
   final ScrollController scrollController = ScrollController();
+  final RxBool isConnected = true.obs;
+  late Box<Product> productBox;
 
   @override
   void onInit() {
     super.onInit();
-    fetchProducts();
+    initializeHive();
+    checkConnectivity();
+    setupConnectivityListener();
     setupScrollListener();
+    fetchOrLoadProducts();
   }
 
   @override
   void onClose() {
     scrollController.dispose();
+    productBox.close();
     super.onClose();
+  }
+/// hive
+  void initializeHive() async {
+    productBox = Hive.box<Product>('products');
   }
 
   void setupScrollListener() {
@@ -39,7 +50,21 @@ class HomeController extends GetxController {
       }
     });
   }
+/// internet connectivity
+  void setupConnectivityListener() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      isConnected.value = result != ConnectivityResult.none;
+      if (isConnected.value) {
+        fetchOrLoadProducts(); // Retry fetching data when connection is restored
+      }
+    });
+  }
 
+  Future<void> checkConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    isConnected.value = result != ConnectivityResult.none;
+  }
+/// search function
   void updateSearchQuery(String query) {
     searchQuery.value = query;
     filterProducts();
@@ -49,7 +74,7 @@ class HomeController extends GetxController {
     sortOption.value = option;
     filterProducts();
   }
-
+/// filter function
   void filterProducts() {
     if (searchQuery.isEmpty) {
       filteredProducts.value = List.from(productList);
@@ -60,7 +85,7 @@ class HomeController extends GetxController {
           .toList();
     }
 
-    // Apply sorting
+    /// Apply sorting
     switch (sortOption.value) {
       case 'price_low_high':
         filteredProducts.sort((a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
@@ -72,11 +97,18 @@ class HomeController extends GetxController {
         filteredProducts.sort((a, b) => (b.rating?.rate ?? 0).compareTo(a.rating?.rate ?? 0));
         break;
       default:
-      // Default sorting (featured or none)
         break;
     }
   }
-
+/// fetchOrLoadProducts
+  Future<void> fetchOrLoadProducts() async {
+    if (isConnected.value) {
+      await fetchProducts();
+    } else {
+      loadFromHive();
+    }
+  }
+/// fetchProducts
   Future<void> fetchProducts() async {
     inProgress.value = true;
     try {
@@ -84,11 +116,11 @@ class HomeController extends GetxController {
 
       if (response.isSuccess) {
         List<Product> products;
-        // Check the type of response data
+
         if (response.responseData is String) {
           products = productFromJson(response.responseData);
         } else if (response.responseData is List) {
-          // If the response is already a parsed List<dynamic>
+
           products = (response.responseData as List)
               .map((json) => Product.fromJson(json))
               .toList();
@@ -98,10 +130,14 @@ class HomeController extends GetxController {
 
         productList.value = products;
         filterProducts();
+
+        /// Save to Hive
+        await productBox.clear(); // Clear old data
+        await productBox.addAll(products); // Save new data
       } else {
         Get.snackbar(
           'Error',
-          'Failed to load products: ${response.statusCode}',
+          'Failed to load products',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -120,25 +156,43 @@ class HomeController extends GetxController {
       inProgress.value = false;
     }
   }
+
+  void loadFromHive() {
+    final cachedProducts = productBox.values.toList();
+    if (cachedProducts.isNotEmpty) {
+      productList.value = cachedProducts;
+      filterProducts();
+    } else {
+      productList.clear();
+      filteredProducts.clear();
+    }
+  }
+
   /// Load more products (pagination)
   Future<void> loadMoreProducts() async {
-    if (currentPage.value >= 2) {
-      // For demo purposes, we'll simulate no more data after page 2
-      hasMoreData.value = false;
+    if (!isConnected.value) {
+      Get.snackbar(
+        'No Internet',
+        'Cannot load more products offline',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
       return;
     }
 
+    if (currentPage.value >= 2) {
+      hasMoreData.value = false;
+      return;
+    }
     inProgress.value = true;
     currentPage.value++;
-
     try {
-      // In a real app, you would fetch the next page from API
-      // For this demo, we'll just duplicate existing products with modified IDs
-      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+      await Future.delayed(const Duration(seconds: 1));
 
       final List<Product> moreProducts = productList.map((product) {
         return Product(
-          id: product.id! + 100, // Add 100 to make IDs unique
+          id: product.id! + 100,
           title: product.title,
           price: product.price,
           description: product.description,
@@ -150,6 +204,10 @@ class HomeController extends GetxController {
 
       productList.addAll(moreProducts);
       filterProducts();
+
+      /// Save updated product list to Hive
+      await productBox.clear();
+      await productBox.addAll(productList);
 
     } catch (e) {
       AppLoggerHelper.error('Error loading more products: $e');

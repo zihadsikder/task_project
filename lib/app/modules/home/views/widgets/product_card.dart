@@ -83,7 +83,7 @@ class ProductCard extends StatelessWidget {
            ],
           ),
 
-          // Product Details
+          /// Product Details
           Padding(
             padding: EdgeInsets.only(left:2.w,right:8.w,top: 8.h,bottom: 8.h),
             child: Column(
@@ -104,7 +104,7 @@ class ProductCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
                 SizedBox(height: 8.h),
-                // Price and Rating
+                /// Price and Rating
                 Row(
                   children: [
                     Container(
