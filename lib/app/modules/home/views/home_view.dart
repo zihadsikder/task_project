@@ -15,14 +15,14 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
           children: [
-            SizedBox(height: 20.h),
+            SizedBox(height:
+                    16.h),
             Container(
-
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.h),
                 color: Colors.transparent,
@@ -37,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                 child: Row(
                   children: [
                     Image.asset(IconPath.search,height: 16.h,),
-
+            
                     SizedBox(width: 8.w),
                     CustomText(
                       text: 'Search Anythings...',
@@ -55,7 +55,7 @@ class HomeView extends GetView<HomeController> {
                     controller.productList.isEmpty) {
                   return const ShimmerLoading();
                 }
-      
+            
                 /// Show empty state if no products are available
                 if (controller.filteredProducts.isEmpty) {
                   return const Center(
@@ -65,7 +65,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                   );
                 }
-      
+            
                 /// Show the product grid
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -96,7 +96,7 @@ class HomeView extends GetView<HomeController> {
                         if (index >= controller.filteredProducts.length) {
                           return const Center(child: CircularProgressIndicator());
                         }
-      
+            
                         final product = controller.filteredProducts[index];
                         return ProductCard(product: product);
                       },

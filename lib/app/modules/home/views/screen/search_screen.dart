@@ -16,11 +16,11 @@ class SearchScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-      
-        body: Column(
+    return Scaffold(
+      backgroundColor: AppColors.background,
+    
+      body: SafeArea(
+        child: Column(
           children: [
             Container(
               color: Colors.white,
@@ -45,7 +45,7 @@ class SearchScreen extends GetView<HomeController> {
                 if (controller.inProgress.value && controller.productList.isEmpty) {
                   return const ShimmerLoading();
                 }
-      
+            
                 // Show empty state if no products are available
                 if (controller.filteredProducts.isEmpty) {
                   return const Center(
@@ -55,7 +55,7 @@ class SearchScreen extends GetView<HomeController> {
                     ),
                   );
                 }
-      
+            
                 // Show the product grid
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -81,7 +81,7 @@ class SearchScreen extends GetView<HomeController> {
                         if (index >= controller.filteredProducts.length) {
                           return const Center(child: CircularProgressIndicator());
                         }
-      
+            
                         final product = controller.filteredProducts[index];
                         return ProductCard(product: product);
                       },
