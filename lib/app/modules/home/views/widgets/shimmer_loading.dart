@@ -50,21 +50,21 @@ class ShimmerLoading extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title placeholder
+                        /// Title placeholder
                         Container(
                           height: 14.sp,
                           width: double.infinity,
                           color: Colors.grey[300],
                         ),
                         SizedBox(height: 8.h),
-                        // Price placeholder
+                        /// Price placeholder
                         Container(
                           height: 14.sp,
                           width: 60.w,
                           color: Colors.grey[300],
                         ),
                         SizedBox(height: 8.h),
-                        // Rating placeholder
+                        /// Rating placeholder
                         Row(
                           children: [
                             Container(

@@ -96,8 +96,7 @@
 import 'dart:convert';
 import 'package:hive/hive.dart';
 
-part 'product_models.g.dart'; // This will be generated
-
+part 'product_models.g.dart';
 List<Product> productFromJson(String str) => List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
 
 String productToJson(List<Product> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));

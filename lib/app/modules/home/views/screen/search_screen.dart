@@ -41,12 +41,11 @@ class SearchScreen extends GetView<HomeController> {
             ),
             Expanded(
               child: Obx(() {
-                // Show loading indicator when fetching initial data
+
                 if (controller.inProgress.value && controller.productList.isEmpty) {
                   return const ShimmerLoading();
                 }
-            
-                // Show empty state if no products are available
+
                 if (controller.filteredProducts.isEmpty) {
                   return const Center(
                     child: Text(
@@ -55,8 +54,7 @@ class SearchScreen extends GetView<HomeController> {
                     ),
                   );
                 }
-            
-                // Show the product grid
+
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: RefreshIndicator(
@@ -77,11 +75,10 @@ class SearchScreen extends GetView<HomeController> {
                       itemCount: controller.filteredProducts.length +
                           (controller.inProgress.value && controller.productList.isNotEmpty ? 2 : 0),
                       itemBuilder: (context, index) {
-                        // Show loading at the end for pagination
+
                         if (index >= controller.filteredProducts.length) {
                           return const Center(child: CircularProgressIndicator());
                         }
-            
                         final product = controller.filteredProducts[index];
                         return ProductCard(product: product);
                       },

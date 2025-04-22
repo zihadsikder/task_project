@@ -26,7 +26,7 @@ class SortDropdown extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
+
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Row(
@@ -34,7 +34,6 @@ class SortDropdown extends StatelessWidget {
                   children: [
                     CustomText(text: 'Sort By',   fontSize: 18.sp,
                      ),
-
                     IconButton(
                       icon: Icon(
                         Icons.close,
