@@ -12,6 +12,8 @@ offline caching, and follows a clean architecture pattern using GetX for state m
 
 A Flutter e-commerce application that displays products from FakeStoreAPI with search, filtering, and sorting capabilities. The app implements pagination, offline caching, and follows a clean architecture pattern using GetX for state management.
 
+app video link : https://www.loom.com/share/0603525d86d0432a837b92253dee14a6?sid=169ff1a3-d1d5-47be-8e1d-8dc9536dacbf
+apk link : https://drive.google.com/file/d/1WIV_zef9Rf8B1xEoMp8Ry8VuLymLUARO/view?usp=drive_link
 
 ## Features
 
@@ -21,7 +23,6 @@ A Flutter e-commerce application that displays products from FakeStoreAPI with s
 - Displays products in a responsive grid layout
 - Implements pagination with "load more" on scroll
 ![Product list](https://github.com/user-attachments/assets/d2f914a7-c02f-4046-abb8-a3eba274f31f)
-
 
 
 - **Search & Filters**
@@ -44,12 +45,11 @@ A Flutter e-commerce application that displays products from FakeStoreAPI with s
 - Minimizes rebuilds with Obx and .obs variables
 
 
-
 - **Offline-First Approach**
 
 - Caches API responses using Hive
 - Shows cached data when offline
-- Displays offline notification via snackbar
+- Displays offline notification via bottom snackbar
 Technical Implementation
 
 ### Key Components
