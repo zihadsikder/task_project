@@ -36,8 +36,6 @@ A Flutter e-commerce application that displays products from FakeStoreAPI with s
 
 
 
-
-
 - **State Management**
 
 - Uses GetX for reactive state management

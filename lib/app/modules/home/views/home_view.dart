@@ -20,7 +20,7 @@ class HomeView extends GetView<HomeController> {
         backgroundColor: AppColors.background,
         body: Column(
           children: [
-            //SizedBox(height: 24.h),
+            SizedBox(height: 20.h),
             Container(
 
               decoration: BoxDecoration(
@@ -37,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                 child: Row(
                   children: [
                     Image.asset(IconPath.search,height: 16.h,),
-                    //Icon(Icons.search_outlined,color: AppColors.textSecondary ,),
+
                     SizedBox(width: 8.w),
                     CustomText(
                       text: 'Search Anythings...',
@@ -50,13 +50,13 @@ class HomeView extends GetView<HomeController> {
             ),
             Expanded(
               child: Obx(() {
-                // Show loading indicator when fetching initial data
+                /// Show loading indicator when fetching initial data
                 if (controller.inProgress.value &&
                     controller.productList.isEmpty) {
                   return const ShimmerLoading();
                 }
       
-                // Show empty state if no products are available
+                /// Show empty state if no products are available
                 if (controller.filteredProducts.isEmpty) {
                   return const Center(
                     child: Text(
@@ -66,7 +66,7 @@ class HomeView extends GetView<HomeController> {
                   );
                 }
       
-                // Show the product grid
+                /// Show the product grid
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: RefreshIndicator(
@@ -92,7 +92,7 @@ class HomeView extends GetView<HomeController> {
                               ? 2
                               : 0),
                       itemBuilder: (context, index) {
-                        // Show loading at the end for pagination
+                        /// Show loading at the end for pagination
                         if (index >= controller.filteredProducts.length) {
                           return const Center(child: CircularProgressIndicator());
                         }
