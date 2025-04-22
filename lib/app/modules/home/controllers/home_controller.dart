@@ -1,11 +1,12 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:task_project/app/data/core/utils/logging/logger.dart';
+import 'package:task_project/app/data/models/product_models.dart';
 
 import '../../../../services/api_end_point.dart';
-
 import '../../../../services/newtwork_caller.dart';
-import '../../../data/core/utils/logging/logger.dart';
-import '../../../data/models/product_models.dart';
 
 class HomeController extends GetxController {
   final RxList<Product> productList = <Product>[].obs;
@@ -16,18 +17,29 @@ class HomeController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxString sortOption = 'featured'.obs;
   final ScrollController scrollController = ScrollController();
+  final RxBool isConnected = true.obs; // Track connectivity status
+
+  late Box<Product> productBox; // Hive box for products
 
   @override
   void onInit() {
     super.onInit();
-    fetchProducts();
+    initializeHive();
+    checkConnectivity();
+    setupConnectivityListener();
     setupScrollListener();
+    fetchOrLoadProducts(); // Fetch or load products based on connectivity
   }
 
   @override
   void onClose() {
     scrollController.dispose();
+    productBox.close();
     super.onClose();
+  }
+
+  void initializeHive() async {
+    productBox = Hive.box<Product>('products');
   }
 
   void setupScrollListener() {
@@ -38,6 +50,20 @@ class HomeController extends GetxController {
         }
       }
     });
+  }
+
+  void setupConnectivityListener() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      isConnected.value = result != ConnectivityResult.none;
+      if (isConnected.value) {
+        fetchOrLoadProducts(); // Retry fetching data when connection is restored
+      }
+    });
+  }
+
+  Future<void> checkConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    isConnected.value = result != ConnectivityResult.none;
   }
 
   void updateSearchQuery(String query) {
@@ -77,6 +103,14 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> fetchOrLoadProducts() async {
+    if (isConnected.value) {
+      await fetchProducts();
+    } else {
+      loadFromHive();
+    }
+  }
+
   Future<void> fetchProducts() async {
     inProgress.value = true;
     try {
@@ -98,6 +132,10 @@ class HomeController extends GetxController {
 
         productList.value = products;
         filterProducts();
+
+        // Save to Hive
+        await productBox.clear(); // Clear old data
+        await productBox.addAll(products); // Save new data
       } else {
         Get.snackbar(
           'Error',
@@ -120,8 +158,31 @@ class HomeController extends GetxController {
       inProgress.value = false;
     }
   }
+
+  void loadFromHive() {
+    final cachedProducts = productBox.values.toList();
+    if (cachedProducts.isNotEmpty) {
+      productList.value = cachedProducts;
+      filterProducts();
+    } else {
+      productList.clear();
+      filteredProducts.clear();
+    }
+  }
+
   /// Load more products (pagination)
   Future<void> loadMoreProducts() async {
+    if (!isConnected.value) {
+      Get.snackbar(
+        'No Internet',
+        'Cannot load more products offline',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     if (currentPage.value >= 2) {
       // For demo purposes, we'll simulate no more data after page 2
       hasMoreData.value = false;
@@ -150,6 +211,10 @@ class HomeController extends GetxController {
 
       productList.addAll(moreProducts);
       filterProducts();
+
+      // Save updated product list to Hive
+      await productBox.clear();
+      await productBox.addAll(productList);
 
     } catch (e) {
       AppLoggerHelper.error('Error loading more products: $e');
